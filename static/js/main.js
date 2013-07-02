@@ -6,13 +6,14 @@ Carrot = Class.extend({
     },
 
     load: function() {
-        ctx.drawImage(this.img, 920, 500);
+        ctx.drawImage(this.img, 870, 470);
     }
 });
 
 Rabbit = Class.extend({
     pos: 0, 
     img: null,
+    img_r: null,
 
     getX: function(p) {
         var j = Math.floor(p/treestump.numCol);
@@ -29,6 +30,9 @@ Rabbit = Class.extend({
         this.img = new Image();
         this.img.onload = this.load.bind(this);
         this.img.src = 'static/img/rabbit.png';
+
+        this.img_r = new Image();
+        this.img_r.src = 'static/img/rabbit_r.png';
     },
 
     load: function() {
@@ -36,12 +40,20 @@ Rabbit = Class.extend({
     },
 
     draw: function(p) {
-        ctx.drawImage(this.img, this.getX(p), this.getY(p));
+        if (Math.floor(p/treestump.numCol)%2 === 0) {
+            ctx.drawImage(this.img, this.getX(p), this.getY(p));
+        }
+        else {
+            ctx.drawImage(this.img_r, this.getX(p), this.getY(p));
+        }
     },
 
     clear: function(p) {
         ctx.clearRect(this.getX(p), this.getY(p), this.img.width, this.img.height);
         treestump.draw(p);
+        if (p > 0) {
+            treestump.draw(p-1);
+        }
     },
 
     move: function() {
@@ -111,5 +123,8 @@ window.addEventListener('keydown', function(event) {
     console.log(event.keyCode);
     if (String.fromCharCode(event.keyCode).toUpperCase() == treestump.chars[rabbit.pos + 1]) {
         rabbit.move();
+        if (rabbit.pos === treestump.numCol*treestump.numRow - 1) {
+            alert('WIN!');
+        }
     }
 });
